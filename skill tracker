@@ -1,24 +1,51 @@
 import tkinter as tk
-from PIL import ImageTk
+from PIL import ImageTk, Image
 
-#initialiseapp
-root=tk.Tk()
+#creating the main window
+root = tk.Tk()
 root.title("Skill Tracker")
+root.geometry("1024x768")
 root.eval("tk::PlaceWindow . center")
 
-#creating a frame and placing it in the centre of the screen
-frame1 = tk.Frame(root,width=500, height=600)
-frame1.grid(row=0,column=0)
-frame1.pack_propagate(False)
+#creating a frame
+home_frame = tk.Frame(root)
+home_frame.pack(expand=True)
 
-#creating frame1 widgets
-logo_img = ImageTk.PhotoImage(file=r"C:\Users\Sanchi\Downloads\nea\Unitgym_logo.png")
-logo_widget = tk.Label(frame1, image=logo_img)
-logo_widget.image = logo_img
-logo_widget.pack()
+#creating skill tracker for title
+title_label = tk.Label(
+    home_frame,
+    text="Skill Tracker for",
+    font=("Arial", 26, "bold")
+)
+title_label.pack(pady=(20, 10))
 
-tk.Label(frame1,
-text="Skill Tracker for")
-fg="black",9
-#runapp
+#adding logo
+logo_img = ImageTk.PhotoImage(Image.open(r"C:\Users\Sanchi\Downloads\nea\Unitgym_logo.png").resize((120, 120)))
+logo_label = tk.Label(home_frame, image=logo_img)
+logo_label.image = logo_img
+logo_label.pack(pady=(0, 40))
+
+#creating the login button and ensuring that when the button is pressed the program navigates the user onto the login form interface
+login_btn = tk.Button(
+    home_frame,
+    text="Login",
+    width=10,
+    height=1,
+    font=("Arial", 12),
+    cursor="hand2",
+    command=load_loginframe()).pack()
+login_btn.pack(pady=8)
+
+#creating the register button and ensuring that when the button is pressed the program navigates the user onto the registration form interface
+register_btn = tk.Button(
+    home_frame,
+    text="Register",
+    width=10,
+    height=1,
+    font=("Arial", 12),
+    cursor="hand2",
+    command=load_registrationframe()).pack()
+register_btn.pack(pady=8)
+
+#run app
 root.mainloop()
