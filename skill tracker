@@ -1,13 +1,20 @@
 import tkinter as tk
+from PIL import ImageTk
 
 #initialiseapp
 root=tk.Tk()
 root.title("Skill Tracker")
 root.eval("tk::PlaceWindow . center")
 
+#creating a frame and placing it in the centre of the screen
 frame1 = tk.Frame(root,width=500, height=600)
 frame1.grid(row=0,column=0)
 
+#creating frame1 widgets
+logo_img = ImageTk.PhotoImage(file="assets/Unitgym_logo.pn)
+logo_widget = tk.Label(frame1, image=logo_img))
+logo_widget.image = logo_img
+logo_widget.pack()
 
 #runapp
 root.mainloop()
