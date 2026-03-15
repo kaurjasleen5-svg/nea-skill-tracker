@@ -1,51 +1,250 @@
 import tkinter as tk
 from PIL import ImageTk, Image
+import sqlite3
+    
+#function for ensuring that all frames are centered when they pop up on user's desktop
+def center_window(win,width,height):
+    screen_w=win.winfo_screenwidth()
+    screen_h=win.winfo_screenheight()
+    x = (screen_w//2)-(width//2)
+    y = (screen_h//2)-(height//2)
+    win.geometry(f"{width}x{height}+{x}+{y}")
+
+#function for allowing navigation between frames when certain buttons are pressed
+def show_frame(frame):
+    frame.tkraise()
 
 #creating the main window
 root = tk.Tk()
 root.title("Skill Tracker")
-root.geometry("1024x768")
-root.eval("tk::PlaceWindow . center")
+center_window(root, 1024, 768)
 
-#creating a frame
-home_frame = tk.Frame(root)
-home_frame.pack(expand=True)
+#connecting to database
+connection = sqlite3.connect("skilltracker.db")
+cursor = connection.cursor()
 
-#creating skill tracker for title
-title_label = tk.Label(
-    home_frame,
-    text="Skill Tracker for",
-    font=("Arial", 26, "bold")
-)
-title_label.pack(pady=(20, 10))
+#creating a container for all pages
+container=tk.Frame(root)
+container.pack(fill="both", expand=True)
 
-#adding logo
-logo_img = ImageTk.PhotoImage(Image.open(r"C:\Users\Sanchi\Downloads\nea\Unitgym_logo.png").resize((120, 120)))
-logo_label = tk.Label(home_frame, image=logo_img)
-logo_label.image = logo_img
-logo_label.pack(pady=(0, 40))
+#creating frames
+homeframe=tk.Frame(container, bg="white")
+loginframe=tk.Frame(container, bg="white")
+registerframe=tk.Frame(container, bg="white")
 
-#creating the login button and ensuring that when the button is pressed the program navigates the user onto the login form interface
-login_btn = tk.Button(
-    home_frame,
-    text="Login",
-    width=10,
-    height=1,
-    font=("Arial", 12),
-    cursor="hand2",
-    command=load_loginframe()).pack()
-login_btn.pack(pady=8)
+#ensuring all frames fully cover the window
+for frame in (homeframe, loginframe, registerframe):
+    frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=1, relheight=1)
 
-#creating the register button and ensuring that when the button is pressed the program navigates the user onto the registration form interface
-register_btn = tk.Button(
-    home_frame,
-    text="Register",
-    width=10,
-    height=1,
-    font=("Arial", 12),
-    cursor="hand2",
-    command=load_registrationframe()).pack()
-register_btn.pack(pady=8)
+
+#function for the homeframe content
+def load_homeframe():
+    #creating skill tracker for title
+    title_label = tk.Label(
+        homeframe,
+        text="Skill Tracker for",
+        font=("Arial", 26, "bold"),
+        bg="white")
+    title_label.pack(pady=(20, 10))
+
+    #adding logo
+    logo_img = ImageTk.PhotoImage(Image.open(r"C:\Users\Sanchi\Downloads\nea\Unitgym_logo.png").resize((120, 120)))
+    logo_label = tk.Label(homeframe, image=logo_img, bg="white")
+    logo_label.image = logo_img
+    logo_label.pack(pady=(0, 40))
+
+    #creating the login button and ensuring that when the button is pressed the program navigates the user onto the login form interface
+    login_btn = tk.Button(
+        homeframe,
+        text="Login",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2",
+        command=lambda: show_frame(loginframe)
+    ).pack(pady=20)
+
+    #creating the register button and ensuring that when the button is pressed the program navigates the user onto the registration form interface
+    register_btn = tk.Button(
+        homeframe,
+        text="Register",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2",
+        command=lambda: show_frame(registerframe)
+    ).pack(pady=20)
+
+
+#function for loading the login frame if the user presses the login button on homepagep
+def load_loginframe():
+    #creating login title
+    login_label = tk.Label(
+        loginframe,
+        text="Login",
+        font=("Arial", 26, "bold"),
+        bg="white")
+    login_label.pack(pady=(20, 10))
+
+    #creating username label and entry box
+    username_label = tk.Label(
+        loginframe,
+        text="Username",
+        font=("Arial", 12),
+        bg="white")
+    username_label.pack()
+    username_entry = tk.Entry(
+        loginframe,
+        font=("Arial", 16))
+    username_entry.pack(pady=5)
+
+    #creating password label and entry box
+    password_label = tk.Label(
+        loginframe,
+        text="Password",
+        font=("Arial", 12),
+        bg="white")
+    password_label.pack()
+    password_entry = tk.Entry(
+        loginframe,
+        show="*",
+        font=("Arial", 16))
+    password_entry.pack(pady=5)
+
+    #creating the login button (no function yet)
+    login_btn = tk.Button(
+        loginframe,
+        text="Login",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2"
+    )
+    login_btn.pack(pady=20)
+
+    #creating the back button and ensuring that when the button is pressed the program navigates the user back to the homeframe
+    back_btn = tk.Button(
+        loginframe,
+        text="Back",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2",
+        command=lambda: show_frame(homeframe)
+    )
+    back_btn.pack(pady=10)
+
+
+#function for loading the registration frame
+def load_registrationframe():
+    #creating register title
+    register_label = tk.Label(
+        registerframe,
+        text="Register",
+        font=("Arial", 26, "bold"),
+        bg="white")
+    register_label.pack(pady=(20, 10))
+
+    #creating username label and entry box
+    username_label = tk.Label(
+        registerframe,
+        text="Username",
+        font=("Arial", 12),
+        bg="white")
+    username_label.pack()
+    username_entry = tk.Entry(
+        registerframe,
+        font=("Arial", 16))
+    username_entry.pack(pady=5)
+
+    #creating password label and entry box
+    password_label = tk.Label(
+        registerframe,
+        text="Password",
+        font=("Arial", 12),
+        bg="white")
+    password_label.pack()
+    password_entry = tk.Entry(
+        registerframe,
+        show="*",
+        font=("Arial", 16))
+    password_entry.pack(pady=5)
+
+    #creating confirm password label and entry box
+    confirm_label = tk.Label(
+        registerframe,
+        text="Confirm Password",
+        font=("Arial", 12),
+        bg="white")
+    confirm_label.pack()
+    confirm_entry = tk.Entry(
+        registerframe,
+        show="*",
+        font=("Arial", 16))
+    confirm_entry.pack(pady=5)
+
+    #creating role selection label
+    role_label = tk.Label(
+        registerframe,
+        text="Select Role",
+        font=("Arial", 12),
+        bg="white")
+    role_label.pack(pady=(10, 5))
+
+    #creating radio buttons for selecting role (side by side)
+    role_var = tk.StringVar()
+    role_frame = tk.Frame(registerframe, bg="white")
+    role_frame.pack()
+
+    coach_radio = tk.Radiobutton(
+        role_frame,
+        text="Coach",
+        variable=role_var,
+        value="coach",
+        font=("Arial", 12),
+        bg="white")
+    coach_radio.pack(side="left", padx=10)
+
+    pupil_radio = tk.Radiobutton(
+        role_frame,
+        text="Student",
+        variable=role_var,
+        value="student",
+        font=("Arial", 12),
+        bg="white")
+    pupil_radio.pack(side="left", padx=10)
+
+    #creating the register button (no function yet)
+    register_btn = tk.Button(
+        registerframe,
+        text="Register",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2"
+    )
+    register_btn.pack(pady=20)
+
+    #creating the back button and ensuring that when the button is pressed the program navigates the user back to the homeframe
+    back_btn = tk.Button(
+        registerframe,
+        text="Back",
+        width=10,
+        height=1,
+        font=("Arial", 12),
+        cursor="hand2",
+        command=lambda: show_frame(homeframe)
+    )
+    back_btn.pack(pady=10)
+
+
+#calling all frame functions
+load_homeframe()
+load_loginframe()
+load_registrationframe()
+
+#making sure homepage is first page shown when application is opened
+show_frame(homeframe)
 
 #run app
 root.mainloop()
