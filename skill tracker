@@ -20,7 +20,7 @@ root.title("Skill Tracker")
 center_window(root, 1024, 768)
 
 #connecting to database
-connection = sqlite3.connect("skilltracker.db")
+connection = sqlite3.connect("skilltracker_db")
 cursor = connection.cursor()
 
 #creating a container for all pages
@@ -76,7 +76,7 @@ def load_homeframe():
     ).pack(pady=20)
 
 
-#function for loading the login frame if the user presses the login button on homepagep
+#function for loading the login frame if the user presses the login button on homepage
 def load_loginframe():
     #creating login title
     login_label = tk.Label(
@@ -111,7 +111,7 @@ def load_loginframe():
         font=("Arial", 16))
     password_entry.pack(pady=5)
 
-    #creating the login button (no function yet)
+    #creating the login button ##not linked to function yet
     login_btn = tk.Button(
         loginframe,
         text="Login",
@@ -137,6 +137,46 @@ def load_loginframe():
 
 #function for loading the registration frame
 def load_registrationframe():
+    #function for registering a new user
+    def register_user(username_entry, password_entry, confirm_entry, role_var):
+        from tkinter import messagebox
+
+        username = username_entry.get()
+        password = password_entry.get()
+        confirm_password = confirm_entry.get()
+        role = role_var.get()
+
+        #checking if passwords match
+        if password != confirm_password:
+            messagebox.showerror("Error", "Passwords do not match")
+            return
+
+        #checking if a role has been selected
+        if role == "":
+            messagebox.showerror("Error", "Please select a role")
+            return
+
+        #creating a random user ID
+        import random
+        user_id = random.randint(10000, 99999)
+
+        #inserting user into correct table based on role
+        try:
+            if role == "coach":
+                cursor.execute("INSERT INTO COACH (coach_ID, coach_name, coach_username, coach_password, coach_specialisation) VALUES (?, ?, ?, ?, ?)",
+                               (user_id, username, username, password, None))
+
+            elif role == "student":
+                cursor.execute("INSERT INTO PUPIL (pupil_ID, pupil_name, pupil_username, pupil_password) VALUES (?, ?, ?, ?)",
+                               (user_id, username, username, password))
+
+            connection.commit()
+            messagebox.showinfo("Success", "User successfully registered")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
+    
     #creating register title
     register_label = tk.Label(
         registerframe,
@@ -191,7 +231,7 @@ def load_registrationframe():
         bg="white")
     role_label.pack(pady=(10, 5))
 
-    #creating radio buttons for selecting role (side by side)
+    #creating buttons for selecting role
     role_var = tk.StringVar()
     role_frame = tk.Frame(registerframe, bg="white")
     role_frame.pack()
@@ -214,14 +254,15 @@ def load_registrationframe():
         bg="white")
     pupil_radio.pack(side="left", padx=10)
 
-    #creating the register button (no function yet)
+    #creating the register button
     register_btn = tk.Button(
         registerframe,
         text="Register",
         width=10,
         height=1,
         font=("Arial", 12),
-        cursor="hand2"
+        cursor="hand2",
+        command=lambda: register_user(username_entry, password_entry, confirm_entry, role_var)
     )
     register_btn.pack(pady=20)
 
